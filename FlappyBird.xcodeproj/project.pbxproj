@@ -14,6 +14,13 @@
 		2011BD4B25D3D3AB0055264E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2011BD4A25D3D3AB0055264E /* Assets.xcassets */; };
 		2011BD4E25D3D3AB0055264E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2011BD4C25D3D3AB0055264E /* LaunchScreen.storyboard */; };
 		2011BD5825D3DA2D0055264E /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2011BD5725D3DA2D0055264E /* GameScene.swift */; };
+		2063343E25DB98CB00256E10 /* bgm1.MP3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063343D25DB98CB00256E10 /* bgm1.MP3 */; };
+		2063344125DB98DA00256E10 /* itemget.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063344025DB98DA00256E10 /* itemget.mp3 */; };
+		2063344425DB98F400256E10 /* i_ringo.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2063344325DB98F400256E10 /* i_ringo.gif */; };
+		2063344825DB9F7400256E10 /* gameover.MP3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063344725DB9F7400256E10 /* gameover.MP3 */; };
+		2063344B25DBA81C00256E10 /* bad.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063344A25DBA81C00256E10 /* bad.mp3 */; };
+		2063344E25DBBB4A00256E10 /* baditem.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063344D25DBBB4A00256E10 /* baditem.mp3 */; };
+		2063345125DBBB7600256E10 /* i_imokm.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2063345025DBBB7600256E10 /* i_imokm.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +33,13 @@
 		2011BD4D25D3D3AB0055264E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2011BD4F25D3D3AB0055264E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2011BD5725D3DA2D0055264E /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		2063343D25DB98CB00256E10 /* bgm1.MP3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bgm1.MP3; sourceTree = "<group>"; };
+		2063344025DB98DA00256E10 /* itemget.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = itemget.mp3; sourceTree = "<group>"; };
+		2063344325DB98F400256E10 /* i_ringo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = i_ringo.gif; sourceTree = "<group>"; };
+		2063344725DB9F7400256E10 /* gameover.MP3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = gameover.MP3; sourceTree = "<group>"; };
+		2063344A25DBA81C00256E10 /* bad.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bad.mp3; sourceTree = "<group>"; };
+		2063344D25DBBB4A00256E10 /* baditem.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = baditem.mp3; sourceTree = "<group>"; };
+		2063345025DBBB7600256E10 /* i_imokm.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = i_imokm.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +56,13 @@
 		2011BD3525D3D3AA0055264E = {
 			isa = PBXGroup;
 			children = (
+				2063344D25DBBB4A00256E10 /* baditem.mp3 */,
+				2063344A25DBA81C00256E10 /* bad.mp3 */,
+				2063344325DB98F400256E10 /* i_ringo.gif */,
+				2063345025DBBB7600256E10 /* i_imokm.gif */,
+				2063344725DB9F7400256E10 /* gameover.MP3 */,
+				2063344025DB98DA00256E10 /* itemget.mp3 */,
+				2063343D25DB98CB00256E10 /* bgm1.MP3 */,
 				2011BD4025D3D3AA0055264E /* FlappyBird */,
 				2011BD3F25D3D3AA0055264E /* Products */,
 			);
@@ -127,8 +148,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2063345125DBBB7600256E10 /* i_imokm.gif in Resources */,
+				2063344425DB98F400256E10 /* i_ringo.gif in Resources */,
 				2011BD4E25D3D3AB0055264E /* LaunchScreen.storyboard in Resources */,
+				2063344125DB98DA00256E10 /* itemget.mp3 in Resources */,
+				2063343E25DB98CB00256E10 /* bgm1.MP3 in Resources */,
+				2063344E25DBBB4A00256E10 /* baditem.mp3 in Resources */,
+				2063344B25DBA81C00256E10 /* bad.mp3 in Resources */,
 				2011BD4B25D3D3AB0055264E /* Assets.xcassets in Resources */,
+				2063344825DB9F7400256E10 /* gameover.MP3 in Resources */,
 				2011BD4925D3D3AA0055264E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
