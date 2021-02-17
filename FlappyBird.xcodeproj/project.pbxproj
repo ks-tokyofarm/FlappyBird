@@ -21,6 +21,9 @@
 		2063344B25DBA81C00256E10 /* bad.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063344A25DBA81C00256E10 /* bad.mp3 */; };
 		2063344E25DBBB4A00256E10 /* baditem.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063344D25DBBB4A00256E10 /* baditem.mp3 */; };
 		2063345125DBBB7600256E10 /* i_imokm.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2063345025DBBB7600256E10 /* i_imokm.gif */; };
+		2063345925DBED3A00256E10 /* i_imop.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2063345825DBED3A00256E10 /* i_imop.gif */; };
+		2063345D25DBFD8F00256E10 /* i_hosi.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2063345C25DBFD8F00256E10 /* i_hosi.gif */; };
+		2063346025DBFE5C00256E10 /* star.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2063345F25DBFE5C00256E10 /* star.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +43,9 @@
 		2063344A25DBA81C00256E10 /* bad.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bad.mp3; sourceTree = "<group>"; };
 		2063344D25DBBB4A00256E10 /* baditem.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = baditem.mp3; sourceTree = "<group>"; };
 		2063345025DBBB7600256E10 /* i_imokm.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = i_imokm.gif; sourceTree = "<group>"; };
+		2063345825DBED3A00256E10 /* i_imop.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = i_imop.gif; sourceTree = "<group>"; };
+		2063345C25DBFD8F00256E10 /* i_hosi.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = i_hosi.gif; sourceTree = "<group>"; };
+		2063345F25DBFE5C00256E10 /* star.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = star.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,9 +66,12 @@
 				2063344A25DBA81C00256E10 /* bad.mp3 */,
 				2063344325DB98F400256E10 /* i_ringo.gif */,
 				2063345025DBBB7600256E10 /* i_imokm.gif */,
+				2063345825DBED3A00256E10 /* i_imop.gif */,
+				2063345C25DBFD8F00256E10 /* i_hosi.gif */,
 				2063344725DB9F7400256E10 /* gameover.MP3 */,
 				2063344025DB98DA00256E10 /* itemget.mp3 */,
 				2063343D25DB98CB00256E10 /* bgm1.MP3 */,
+				2063345F25DBFE5C00256E10 /* star.mp3 */,
 				2011BD4025D3D3AA0055264E /* FlappyBird */,
 				2011BD3F25D3D3AA0055264E /* Products */,
 			);
@@ -152,11 +161,14 @@
 				2063344425DB98F400256E10 /* i_ringo.gif in Resources */,
 				2011BD4E25D3D3AB0055264E /* LaunchScreen.storyboard in Resources */,
 				2063344125DB98DA00256E10 /* itemget.mp3 in Resources */,
+				2063346025DBFE5C00256E10 /* star.mp3 in Resources */,
 				2063343E25DB98CB00256E10 /* bgm1.MP3 in Resources */,
 				2063344E25DBBB4A00256E10 /* baditem.mp3 in Resources */,
 				2063344B25DBA81C00256E10 /* bad.mp3 in Resources */,
 				2011BD4B25D3D3AB0055264E /* Assets.xcassets in Resources */,
 				2063344825DB9F7400256E10 /* gameover.MP3 in Resources */,
+				2063345D25DBFD8F00256E10 /* i_hosi.gif in Resources */,
+				2063345925DBED3A00256E10 /* i_imop.gif in Resources */,
 				2011BD4925D3D3AA0055264E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

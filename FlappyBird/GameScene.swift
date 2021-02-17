@@ -13,57 +13,86 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
-    var bird:SKSpriteNode!  // 追加
-    var itemNode:SKNode!    // 課題用に追加
-    
-    var bgmPlayer:AVAudioPlayer!
-    var itemPlayer:AVAudioPlayer!
-    var clashPlayer:AVAudioPlayer!
+    var bird:SKSpriteNode!          // 追加
+    var itemNode:SKNode!            // 課題用に追加
+    var baditemNode:SKNode!         // 課題用に追加
+    var deathitemNode:SKNode!       // 課題用に追加
+    var staritemNode:SKNode!        // 課題用に追加
+
+    var bgmPlayer:AVAudioPlayer!        // BGM
+    var itemPlayer:AVAudioPlayer!       // アイテム取得時効果音
+    var baditemPlayer:AVAudioPlayer!    // マイナスアイテム取得時効果音
+    var clashPlayer:AVAudioPlayer!      // 衝突時効果音
+    var staritemPlayer:AVAudioPlayer!   // スコアアップアイテム取得時効果音
 
     // 衝突判定カテゴリー
-    let birdCategory: UInt32 = 1 << 0           // 0...00001
-    let groundCategory: UInt32 = 1 << 1         // 0...00010
-    let wallCategory: UInt32 = 1 << 2           // 0...00100
-    let scoreCategory: UInt32 = 1 << 3          // 0...01000
-    let itemScoreCategory: UInt32 = 1 << 4      // 0...10000
+    let birdCategory: UInt32 = 1 << 0           // 0...00000001
+    let groundCategory: UInt32 = 1 << 1         // 0...00000010
+    let wallCategory: UInt32 = 1 << 2           // 0...00000100
+    let scoreCategory: UInt32 = 1 << 3          // 0...00001000
+    let itemScoreCategory: UInt32 = 1 << 4      // 0...00010000
+    let baditemScoreCategory: UInt32 = 1 << 5   // 0...00100000
+    let deathitemScoreCategory: UInt32 = 1 << 6 // 0...01000000
+    let staritemScoreCategory: UInt32 = 1 << 7  // 0...10000000
 
+    // 難易度
+    var gameLevel = 1                           // ゲームレベル（0:Eazy / 1:Normal / 2〜:Hard）
+    // DEBUG制御
+    var debug_flg = 0                           // DEBUGフラグ（0:通常プレイ / 1:衝突しても続行）
+    
     // スコア用
-    var score = 0   // 追加
-    var itemScore = 0                           // 課題用に追加
+    var score = 0                               // スコア、追加
+    var itemScore = 0                           // アイテムスコア、課題用に追加
     var scoreLabelNode:SKLabelNode!             // 追加
     var bestScoreLabelNode:SKLabelNode!         // 追加
     var itemScoreLabelNode:SKLabelNode!         // 課題用に追加
-    var msgLabelNode:SKLabelNode!             // 追加
+    var msgLabelNode:SKLabelNode!               // 追加
     let userDefaults:UserDefaults = UserDefaults.standard
     
     // SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
 
-        // 再生する音声ファイルを指定する
+        // アイテム取得時効果音ファイルを指定する
         let itemSoundURL = Bundle.main.url(forResource: "itemget", withExtension: "mp3")
         do {
-            // 効果音を鳴らす
+            // アイテム取得効果音を鳴らす
             itemPlayer = try AVAudioPlayer(contentsOf: itemSoundURL!)
         } catch {
             print("Item Sound Error...")
         }
 
-        // BGMを鳴らす
+        // BGMを指定する
         let bgmSoundURL = Bundle.main.url(forResource: "bgm1", withExtension: "MP3")
         do {
             bgmPlayer = try AVAudioPlayer(contentsOf: bgmSoundURL!)
-            bgmPlayer.numberOfLoops = -1
-            bgmPlayer?.play()
+            bgmPlayer.numberOfLoops = -1    // BGM再生ループは無限
+            bgmPlayer?.play()               // BGMを再生開始
         } catch {
             print("Main BGM Error...")
         }
 
-        // 衝突を鳴らす
+        // 衝突時効果音を鳴らす
         let clashSoundURL = Bundle.main.url(forResource: "bad", withExtension: "mp3")
         do {
             clashPlayer = try AVAudioPlayer(contentsOf: clashSoundURL!)
         } catch {
             print("Clash Sound Error...")
+        }
+
+        // マイナスアイテム取得時効果音を鳴らす
+        let baditemSoundURL = Bundle.main.url(forResource: "baditem", withExtension: "mp3")
+        do {
+            baditemPlayer = try AVAudioPlayer(contentsOf: baditemSoundURL!)
+        } catch {
+            print("Clash Sound Error...")
+        }
+
+        // スコアアップアイテム取得時効果音を鳴らす
+        let staritemSoundURL = Bundle.main.url(forResource: "star", withExtension: "mp3")
+        do {
+            staritemPlayer = try AVAudioPlayer(contentsOf: staritemSoundURL!)
+        } catch {
+            print("ScoreUp Sound Error...")
         }
 
         // 重力を設定
@@ -78,20 +107,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(scrollNode)
         
         // 壁用のノード
-        wallNode = SKNode()     //追加
+        wallNode = SKNode()             //追加
         scrollNode.addChild(wallNode)   // 追加
      
         // アイテム用のノード：課題用に追加    --- ここから ---
         itemNode = SKNode()
         scrollNode.addChild(itemNode)
+        baditemNode = SKNode()
+        scrollNode.addChild(baditemNode)
+        deathitemNode = SKNode()
+        scrollNode.addChild(deathitemNode)
+        staritemNode = SKNode()
+        scrollNode.addChild(staritemNode)
         // --- ここまで ---
         
         // 各種スプライトを生成する処理をメソッドに分割
-        setupGround()
-        setupCloud()
-        setupWall()     // 追加
-        setupBird()     // 追加
-        setupItem()     // 課題用に追加
+        setupGround()       //
+        setupCloud()        //
+        setupWall()         // 追加
+        setupBird()         // 追加
+        setupItem()         // 課題用に追加
+        setupbadItem()      // 課題用に追加
+        setupdeathItem()    // 課題用に追加
+        setupstarItem()     // 課題用に追加
         setupScoreLabel()   // 追加
     }
     
@@ -103,7 +141,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if (contact.bodyA.categoryBitMask & scoreCategory) == scoreCategory || (contact.bodyB.categoryBitMask & scoreCategory) == scoreCategory {
-            // スコア用の物体と衝突した
+            // スコア用の物体と衝突(壁の隙間を通過)した
             print("ScoreUp")
             score += 1
             scoreLabelNode.text = "Score:\(score)"      // 追加
@@ -130,20 +168,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if (contact.bodyB.categoryBitMask & itemScoreCategory) == itemScoreCategory {
                 contact.bodyB.node?.removeFromParent()
             }
+        } else if (contact.bodyA.categoryBitMask & staritemScoreCategory) == staritemScoreCategory || (contact.bodyB.categoryBitMask & staritemScoreCategory) == staritemScoreCategory {
+            // スコアアップアイテムに衝突した
+            print("starItemGet")
+            itemScore += 1
+            score += 2
+            scoreLabelNode.text = "Score:\(score)"      // 追加
+            itemScoreLabelNode.text = "Item Score:\(itemScore)"
+            
+            staritemPlayer?.play()
+            
+            if (contact.bodyA.categoryBitMask & staritemScoreCategory) == staritemScoreCategory {
+                contact.bodyA.node?.removeFromParent()
+            }
+            if (contact.bodyB.categoryBitMask & staritemScoreCategory) == staritemScoreCategory {
+                contact.bodyB.node?.removeFromParent()
+            }
+        } else if (contact.bodyA.categoryBitMask & baditemScoreCategory) == baditemScoreCategory || (contact.bodyB.categoryBitMask & baditemScoreCategory) == baditemScoreCategory {
+            // マイナスアイテムに衝突した
+            print("badItemGet")
+            if itemScore > 0 {
+                itemScore -= 1
+            }
+            itemScoreLabelNode.text = "Item Score:\(itemScore)"
+            
+            baditemPlayer?.play()
+            
+            if (contact.bodyA.categoryBitMask & baditemScoreCategory) == baditemScoreCategory {
+                contact.bodyA.node?.removeFromParent()
+            }
+            if (contact.bodyB.categoryBitMask & baditemScoreCategory) == baditemScoreCategory {
+                contact.bodyB.node?.removeFromParent()
+            }
         } else {
-            clashPlayer?.play()
-            bgmPlayer?.stop()
+            // 壁か地面と衝突したか、即死アイテム取得
+            clashPlayer?.play()     // 衝突時効果音再生
+            if debug_flg == 1 {
+                return
+            }
+            bgmPlayer?.stop()       // BGMの再生を停止
             // gameoverのBGMを鳴らす
             let bgmSoundURL = Bundle.main.url(forResource: "gameover", withExtension: "MP3")
             do {
                 bgmPlayer = try AVAudioPlayer(contentsOf: bgmSoundURL!)
-                bgmPlayer?.play()
+                bgmPlayer?.play()   // ゲームオーバー時の曲を再生
             } catch {
                 print("GameOver Sound Error...")
             }
 
-            // 壁か地面と衝突した
-            msgLabelNode.text = "GAME OVER"
+            msgLabelNode.text = "GAME OVER" // 画面中央にゲームオーバー表示
             print("GameOver")
             
             // スクロールを停止させる
@@ -273,6 +346,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setupWall() {
+        var gap:Int = 0
+        var swing:Float = 0.0
+        
         // 壁の画像を読み込む
         let wallTexture = SKTexture(imageNamed: "wall")
         wallTexture.filteringMode = .linear
@@ -291,13 +367,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // 鳥の画像サイズを取得
         let birdSize = SKTexture(imageNamed: "bird_a").size()
+
+        if gameLevel == 0 {     // イージーモード？
+            gap = 4
+            swing = 3.5
+        } else {                // ノーマル＆ハードモード？
+            gap = 3
+            swing = 2.5
+        }
         
         // 鳥が通り抜ける隙間の長さを鳥のサイズの３倍とする
-        let slit_length = birdSize.height * 3
-        
+//        let slit_length = birdSize.height * 3
+        let slit_length = birdSize.height * CGFloat(gap)
         // 隙間位置の上下の振れ幅を鳥のサイズの2.5倍とする
-        let random_y_range = birdSize.height * 2.5
-        
+//        let random_y_range = birdSize.height * 2.5
+        let random_y_range = birdSize.height * CGFloat(swing)
+
         // 下の壁のY軸下限位置(中央位置から下方向の最大振れ幅で下の壁を表示する位置)を計算
         let groundSize = SKTexture(imageNamed: "ground").size()
         let center_y = groundSize.height + (self.frame.size.height - groundSize.height) / 2
@@ -475,7 +560,267 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         itemNode.run(repeatForeverAnimation)
     }
+
+    func setupbadItem() {
+        var badItemwait:Int = 0
+        
+        // アイテムの画像を読み込む
+        let baditemTexture = SKTexture(imageNamed: "i_imokm.gif")
+        baditemTexture.filteringMode = .linear
+        
+        // 移動する距離を計算
+        let movingDistance = CGFloat(self.frame.size.width * 2)
+        
+        // 画面外まで移動するアクションを作成
+        let movebadItem = SKAction.moveBy(x: -movingDistance, y: 0, duration:4.0)
+        
+        // 自身を消すアクションを作成
+        let removebadItem = SKAction.removeFromParent()
+        
+        // 2つのアニメーションを順に実行するアクションを作成
+        let baditemAnimation = SKAction.sequence([movebadItem, removebadItem])
+        
+        // アイテムを作成するアクションを作成
+        let createbadItemAnimation = SKAction.run({
+            // アイテム関連のノードを乗せるノード作成
+            let baditem = SKNode()
+            baditem.position = CGPoint(x: self.frame.size.width + baditemTexture.size().width / 2, y:0.0)
+            
+            // 画面のY軸の中央値
+            let badcenter_y = self.frame.size.height / 2
+            
+            // アイテムのY座標を上下ランダムにさせるときの最大値
+            let badrandom_y_range = self.frame.size.height / 2
+            
+            // アイテムのY軸の下限
+            let baditem_lowest_y = UInt32( badcenter_y - baditemTexture.size().height / 2 - badrandom_y_range / 2)
+            
+            // 1〜random_y_rangeまでのランダムな数値を生成
+            let badrandom_y = arc4random_uniform( UInt32(badrandom_y_range))
+            
+            // Y軸の加減にランダムな値を足して、アイテムのY座標を決定
+            let baditem_y = CGFloat(baditem_lowest_y + badrandom_y)
+            
+            // 画面のX軸の中央値
+            let badcenter_x = self.frame.size.width / 2
+            
+            // アイテムのX座標を上下ランダムにさせる時の最大値
+            let badrandom_x_range = self.frame.size.width / 2
+            
+            // アイテムのX軸の下限
+            let baditem_lowest_x = UInt32( badcenter_x - baditemTexture.size().width / 2 - badrandom_x_range / 2)
+            
+            // 1〜randam_x_rangeまでのランダムな整数を生成
+            let badrandom_x = arc4random_uniform( UInt32(badrandom_x_range))
+
+            // X軸の加減にランダムな値を足して、アイテムのX座標を決定
+            let baditem_x = CGFloat(baditem_lowest_x + badrandom_x)
+            
+            // アイテムを生成
+            let baditemSprite = SKSpriteNode(texture: baditemTexture)
+            baditemSprite.position = CGPoint(x: baditem_x, y: baditem_y)
+            
+            baditemSprite.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: baditemSprite.size.width, height: baditemSprite.size.height))   //重力を設定
+            baditemSprite.physicsBody?.isDynamic = false
+            baditemSprite.physicsBody?.categoryBitMask = self.baditemScoreCategory
+            baditemSprite.physicsBody?.contactTestBitMask = self.birdCategory      // 衝突判定させる相手のカテゴリ設定
+            
+            baditem.addChild(baditemSprite)
+            
+            baditem.run(baditemAnimation)
+            
+            self.baditemNode.addChild(baditem)
+        })
+        
+        // 次のアイテム作成までの待ち時間のアクションを作成
+        if gameLevel == 0 {             // イージーモード？
+            badItemwait = 10
+        } else if gameLevel == 2 {      // ハードモード？
+            badItemwait = 2
+        } else {
+            badItemwait = 5             // ノーマルモード？
+        }
+        let badwaitAnimation = SKAction.wait(forDuration: TimeInterval(CGFloat(badItemwait)))
+        // アイテムを作成->待ち時間->アイテムを作成を無限に繰り返すアクションを作成
+        let badrepeatForeverAnimation = SKAction.repeatForever(SKAction.sequence([createbadItemAnimation, badwaitAnimation]))
+        baditemNode.run(badrepeatForeverAnimation)
+    }
+
+    func setupdeathItem() {
+        var deathItemwait:Int = 0
+        
+        // アイテムの画像を読み込む
+        let deathitemTexture = SKTexture(imageNamed: "i_imop.gif")
+        deathitemTexture.filteringMode = .linear
+        
+        // 移動する距離を計算
+        let movingDistance = CGFloat(self.frame.size.width * 2)
+        
+        // 画面外まで移動するアクションを作成
+        let movedeathItem = SKAction.moveBy(x: -movingDistance, y: 0, duration:4.0)
+        
+        // 自身を消すアクションを作成
+        let removedeathItem = SKAction.removeFromParent()
+        
+        // 2つのアニメーションを順に実行するアクションを作成
+        let deathitemAnimation = SKAction.sequence([movedeathItem, removedeathItem])
+        
+        // アイテムを作成するアクションを作成
+        let createdeathItemAnimation = SKAction.run({
+            // アイテム関連のノードを乗せるノード作成
+            let deathitem = SKNode()
+            deathitem.position = CGPoint(x: self.frame.size.width + deathitemTexture.size().width / 2, y:0.0)
+            
+            // 画面のY軸の中央値
+            let center_y = self.frame.size.height / 2
+            
+            // アイテムのY座標を上下ランダムにさせるときの最大値
+            let random_y_range = self.frame.size.height / 2
+            
+            // アイテムのY軸の下限
+            let deathitem_lowest_y = UInt32( center_y - deathitemTexture.size().height / 2 - random_y_range / 2)
+            
+            // 1〜random_y_rangeまでのランダムな数値を生成
+            let random_y = arc4random_uniform( UInt32(random_y_range))
+            
+            // Y軸の加減にランダムな値を足して、アイテムのY座標を決定
+            let deathitem_y = CGFloat(deathitem_lowest_y + random_y)
+            
+            // 画面のX軸の中央値
+            let deathcenter_x = self.frame.size.width / 2
+            
+            // アイテムのX座標を上下ランダムにさせる時の最大値
+            let deathrandom_x_range = self.frame.size.width / 2
+            
+            // アイテムのX軸の下限
+            let deathitem_lowest_x = UInt32( deathcenter_x - deathitemTexture.size().width / 2 - deathrandom_x_range / 2)
+            
+            // 1〜randam_x_rangeまでのランダムな整数を生成
+            let deathrandom_x = arc4random_uniform( UInt32(deathrandom_x_range))
+
+            // X軸の加減にランダムな値を足して、アイテムのX座標を決定
+            let deathitem_x = CGFloat(deathitem_lowest_x + deathrandom_x)
+            
+            // アイテムを生成
+            let deathitemSprite = SKSpriteNode(texture: deathitemTexture)
+            deathitemSprite.position = CGPoint(x: deathitem_x, y: deathitem_y)
+            
+            deathitemSprite.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: deathitemSprite.size.width, height: deathitemSprite.size.height))   //重力を設定
+            deathitemSprite.physicsBody?.isDynamic = false
+            deathitemSprite.physicsBody?.categoryBitMask = self.deathitemScoreCategory
+            deathitemSprite.physicsBody?.contactTestBitMask = self.birdCategory      // 衝突判定させる相手のカテゴリ設定
+            
+            deathitem.addChild(deathitemSprite)
+            
+            deathitem.run(deathitemAnimation)
+            
+            self.deathitemNode.addChild(deathitem)
+        })
+        
+        // 次のアイテム作成までの待ち時間のアクションを作成
+        if gameLevel == 0 {             // イージーモード？
+            deathItemwait = 86400        // 実質即死アイテムは出さない
+        } else if gameLevel == 2 {      // ハードモード？
+            deathItemwait = 10
+        } else {
+            deathItemwait = 30             // ノーマルモード？
+        }
+//        let deathwaitAnimation = SKAction.wait(forDuration: 7)
+        let deathwaitAnimation = SKAction.wait(forDuration: TimeInterval(CGFloat(deathItemwait)))
+
+        // アイテムを作成->待ち時間->アイテムを作成を無限に繰り返すアクションを作成
+        let deathrepeatForeverAnimation = SKAction.repeatForever(SKAction.sequence([createdeathItemAnimation, deathwaitAnimation]))
+            
+        deathitemNode.run(deathrepeatForeverAnimation)
+    }
     
+    func setupstarItem() {
+        var starItemwait:Int = 0
+        
+        // アイテムの画像を読み込む
+        let staritemTexture = SKTexture(imageNamed: "i_hosi.gif")
+        staritemTexture.filteringMode = .linear
+        
+        // 移動する距離を計算
+        let starmovingDistance = CGFloat(self.frame.size.width * 2)
+        
+        // 画面外まで移動するアクションを作成
+        let starmoveItem = SKAction.moveBy(x: -starmovingDistance, y: 0, duration:4.0)
+        
+        // 自身を消すアクションを作成
+        let starremoveItem = SKAction.removeFromParent()
+        
+        // 2つのアニメーションを順に実行するアクションを作成
+        let staritemAnimation = SKAction.sequence([starmoveItem, starremoveItem])
+        
+        // アイテムを作成するアクションを作成
+        let starcreateItemAnimation = SKAction.run({
+            // アイテム関連のノードを乗せるノード作成
+            let staritem = SKNode()
+            staritem.position = CGPoint(x: self.frame.size.width + staritemTexture.size().width / 2, y:0.0)
+            
+            // 画面のY軸の中央値
+            let starcenter_y = self.frame.size.height / 2
+            
+            // アイテムのY座標を上下ランダムにさせるときの最大値
+            let starrandom_y_range = self.frame.size.height / 2
+            
+            // アイテムのY軸の下限
+            let staritem_lowest_y = UInt32( starcenter_y - staritemTexture.size().height / 2 - starrandom_y_range / 2)
+            
+            // 1〜random_y_rangeまでのランダムな数値を生成
+            let starrandom_y = arc4random_uniform( UInt32(starrandom_y_range))
+            
+            // Y軸の加減にランダムな値を足して、アイテムのY座標を決定
+            let staritem_y = CGFloat(staritem_lowest_y + starrandom_y)
+            
+            // 画面のX軸の中央値
+            let starcenter_x = self.frame.size.width / 2
+            
+            // アイテムのX座標を上下ランダムにさせる時の最大値
+            let starrandom_x_range = self.frame.size.width / 2
+            
+            // アイテムのX軸の下限
+            let staritem_lowest_x = UInt32( starcenter_x - staritemTexture.size().width / 2 - starrandom_x_range / 2)
+            
+            // 1〜randam_x_rangeまでのランダムな整数を生成
+            let starrandom_x = arc4random_uniform( UInt32(starrandom_x_range))
+
+            // X軸の加減にランダムな値を足して、アイテムのX座標を決定
+            let staritem_x = CGFloat(staritem_lowest_x + starrandom_x)
+            
+            // アイテムを生成
+            let staritemSprite = SKSpriteNode(texture: staritemTexture)
+            staritemSprite.position = CGPoint(x: staritem_x, y: staritem_y)
+            
+            staritemSprite.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: staritemSprite.size.width, height: staritemSprite.size.height))   //重力を設定
+            staritemSprite.physicsBody?.isDynamic = false
+            staritemSprite.physicsBody?.categoryBitMask = self.staritemScoreCategory
+            staritemSprite.physicsBody?.contactTestBitMask = self.birdCategory      // 衝突判定させる相手のカテゴリ設定
+            
+            staritem.addChild(staritemSprite)
+            
+            staritem.run(staritemAnimation)
+            
+            self.staritemNode.addChild(staritem)
+        })
+        
+        if gameLevel == 0 {             // イージーモード？
+            starItemwait = 15           //
+        } else if gameLevel == 2 {      // ハードモード？
+            starItemwait = 60
+        } else {
+            starItemwait = 30            // ノーマルモード？
+        }
+        let starwaitAnimation = SKAction.wait(forDuration: TimeInterval(CGFloat(starItemwait)))
+        
+        // アイテムを作成->待ち時間->アイテムを作成を無限に繰り返すアクションを作成
+        let starrepeatForeverAnimation = SKAction.repeatForever(SKAction.sequence([starcreateItemAnimation, starwaitAnimation]))
+        
+        staritemNode.run(starrepeatForeverAnimation)
+    }
+
+
     func setupScoreLabel() {
         score = 0
         scoreLabelNode = SKLabelNode()
@@ -512,7 +857,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         msgLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
         msgLabelNode.text = ""
         self.addChild(msgLabelNode)
-
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
